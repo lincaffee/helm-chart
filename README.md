@@ -1,9 +1,11 @@
 # helm-chart
 helm的chart仓库，地址为：lincaffee.github.io/helm-chart
+
 本Chart仓库的使用方法：
 
 ## 添加chart仓库
 helm repo add myrepo https://lincaffee.github.io/helm-chart
+
 helm repo update
 
 ## 添加成功后查看仓库
