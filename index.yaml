@@ -1,14 +1,25 @@
 apiVersion: v1
 entries:
+  aaa:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-01-17T22:55:12.772169166+08:00"
+    description: A Helm chart for Kubernetes
+    digest: 2aefed974ce273a6882ea2be747301c0de901a837c6038a9c7c9d0db4d7dc669
+    name: aaa
+    type: application
+    urls:
+    - https://yushanjin.github.io/helm-chart/aaa-0.1.0.tgz
+    version: 0.1.0
   test:
   - apiVersion: v2
     appVersion: 1.16.0
-    created: "2024-01-12T13:44:47.648797544+08:00"
+    created: "2024-01-17T22:55:12.773866557+08:00"
     description: A Helm chart for Kubernetes
     digest: 06a14cd0317a7cdd2510126d553ca1192df4d596aa4ae5015854ee15ba42b4b4
     name: test
     type: application
     urls:
-    - https://lincaffee.github.io/helm-chart/test-0.1.0.tgz
+    - https://yushanjin.github.io/helm-chart/test-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-12T13:44:47.648350371+08:00"
+generated: "2024-01-17T22:55:12.771156915+08:00"
