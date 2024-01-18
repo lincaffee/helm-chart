@@ -1,0 +1,223 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name:  {{ .Values.configMapName }}
+  namespace: {{ include "global.namespace" . | quote }}
+data:
+  application.yaml: |
+      ##### 公共 配置 #######
+      project:
+        version: 3.3.0
+      #内置Tomcat容器配置
+      server:
+        port: 8080
+        #搜索log定时任务时间 两分钟一次
+        searchCopyCronTask:  0 */2 * * * ?
+        #搜索缓存名称
+        searchCacheName: searchCacheName
+        #查看缓存名称
+        copyCacheName: copyCacheName
+        #时间延迟定时任务
+        timeDelayCronTask: 0 */2 * * * ?
+        #部门同步定时任务
+        departmentSyncCronTask: 0 0 */2 * * ?
+        #时间延迟
+        timeDelay: timeDelay
+        #时间延迟v2
+        timeDelayV2: timeDelayV2
+        #合并数据
+        v2mergeLog: v2mergeLog
+        #服务请求状态
+        requestStatus: requestStatus
+        #阈值
+        threshold: 2000
+        #备份n天日志
+        backups: 30
+        servlet:
+          session:
+            #session过期时间 12小时
+            timeout: 43200
+          #应用路径，配置应用路径，可方便进行反向代理
+          context-path:
+      #    context-path: /baseadmin
+      #基础配置
+      spring:
+        profiles:
+          active: ${AIX_ADMIN:dev} #选择配置分支，先读取系统环境变量，如果没有则默认值为 dev
+        application:
+          name: aixstatistics
+        system:
+          param:
+            client: DEFAULT
+      
+        #修改thymeleaf访问根路径
+        thymeleaf:
+          prefix: classpath:/view/
+      
+        #mvc接收参数时对日期进行格式化
+        mvc:
+          date-format: yyyy-MM-dd HH:mm:ss
+      
+        #jackson对响应回去的日期参数进行格式化
+        jackson:
+          date-format: yyyy-MM-dd HH:mm:ss
+          time-zone: GMT+8
+      
+        #打印SQL
+        jpa:
+          show-sql: false
+      
+      #是否需要输入验证码
+      captcha:
+        enable: false
+      
+      
+      ---
+      ##### dev 配置 #######
+      spring:
+        profiles: dev
+        datasource:
+          name: aixdata
+          dynamic:
+            primary: master
+            datasource:
+              authorize:
+                url: jdbc:mysql://aix-authorize-mysql:3306/enterprise_authorize?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useTimezone=true&useUnicode=true&useSSL=false&connectTimeout=3000
+                username: authorize
+                password: authorize2021
+                driver-class-name: com.mysql.cj.jdbc.Driver
+                type: com.zaxxer.hikari.HikariDataSource
+              master:
+                url: jdbc:mysql://aix-stat-mysql:3306/aixdata?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useTimezone=true&useUnicode=true&useSSL=false&connectTimeout=3000
+                driver-class-name: com.mysql.cj.jdbc.Driver
+                username: aixuser
+                password: aixpass
+      
+        hikari:
+          connection-timeout: 10000
+          connection-test-query: SELECT 1
+          validation-timeout: 3000
+          idle-timeout: 30000
+          login-timeout: 5
+          max-lifetime: 60000
+          maximum-pool-size: 20
+          minimum-idle: 5
+          read-only: false
+      
+        jpa:
+          show-sql: false
+          database-platform: org.hibernate.dialect.MySQL5InnoDBDialect #设置数据库方言  记住必须要使用 MySQL5InnoDBDialect 指定数据库类型对应InnoDB  ;如果使用MySQLDialect 则对应的是MyISAM
+          properties:
+            hibernate:
+              format_sql: false
+        logging:
+          level:
+            org.hibernate.type.descriptor.sql: trace
+      
+      logging:
+        level:
+          org:
+            hibernate:
+              type:
+                descriptor:
+                  sql: trace
+      #是否需要输入验证码
+      captcha:
+        enable: false
+      
+      ## mybatis
+      mybatis:
+        mapper-locations: classpath:mapper/**/*.xml
+        configuration:
+          cache-enabled: true
+          map-underscore-to-camel-case: true
+          log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+      
+      ---
+      ##### prod 配置 #######
+      spring:
+        profiles: prod
+      
+        #数据库配置
+        datasource:
+          url: jdbc:mysql://localhost:3306/test?serverTimezone=GMT%2B8&characterEncoding=utf-8
+          username: root
+          password:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+      
+      #是否需要输入验证码
+      captcha:
+        enable: false
+      
+      #  ehcache作为缓存
+      cache:
+        type: ehcache
+        ehcache:
+          config: classpath:ehcache.xml
+      
+      ---
+      ##### test 配置 #######
+      spring:
+        profiles: test
+      
+        datasource:
+          name: aixdata
+          dynamic:
+            primary: master
+            datasource:
+              authorize:
+                url: jdbc:mysql://testserver3.nnthink.com:33061/enterprise_authorize?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useTimezone=true&useUnicode=true&useSSL=false&connectTimeout=3000
+                username: authorize
+                password: authorize2021
+                driver-class-name: com.mysql.cj.jdbc.Driver
+                type: com.zaxxer.hikari.HikariDataSource
+              master:
+                url: jdbc:mysql://testserver3.nnthink.com:33062/aixdata?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useTimezone=true&useUnicode=true&useSSL=false&connectTimeout=3000
+                driver-class-name: com.mysql.cj.jdbc.Driver
+      #          url: jdbc:log4jdbc:mysql://47.95.39.75:10002/aixdata?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useTimezone=true&useUnicode=true&useSSL=false&connectTimeout=3000
+      #          driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      #          type: com.zaxxer.hikari.HikariDataSource
+                username: aixuser
+                password: aixpass
+      
+        hikari:
+          connection-timeout: 10000
+          connection-test-query: SELECT 1
+          validation-timeout: 3000
+          idle-timeout: 30000
+          login-timeout: 5
+          max-lifetime: 60000
+          maximum-pool-size: 20
+          minimum-idle: 5
+          read-only: false
+      
+        jpa:
+          show-sql: false
+          database-platform: org.hibernate.dialect.MySQL5InnoDBDialect #设置数据库方言  记住必须要使用 MySQL5InnoDBDialect 指定数据库类型对应InnoDB  ;如果使用MySQLDialect 则对应的是MyISAM
+          properties:
+            hibernate:
+              format_sql: false
+        logging:
+          level:
+            org.hibernate.type.descriptor.sql: trace
+      
+      logging:
+        level:
+          org:
+            hibernate:
+              type:
+                descriptor:
+                  sql: trace
+      #是否需要输入验证码
+      captcha:
+        enable: false
+      
+      ## mybatis
+      mybatis:
+        mapper-locations: classpath:mapper/**/*.xml
+        configuration:
+          cache-enabled: true
+          map-underscore-to-camel-case: true
+          log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
