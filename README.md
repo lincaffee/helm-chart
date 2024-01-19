@@ -20,20 +20,20 @@ xxx为relaese名字
 
 # helm-chart
 
-## helm的chart仓库地址为：https://chenghsong.github.io/helm-chart
+## helm的chart仓库地址为：https://lincaffee.github.io/helm-chart
 
 ## 本Chart仓库的使用方法
 
 1、添加chart仓库
 ```
-# helm repo add myrepo https://chenghsong.github.io/helm-chart
+# helm repo add myrepo https://lincaffee.github.io/helm-chart
 ```
 
 2、添加成功
 ```
 # helm repo list
 NAME  	URL                                   
-myrepo	https://chenghsong.github.io/helm-chart
+myrepo	https://lincaffee.github.io/helm-chart
 ```
 
 3、搜索chart包
